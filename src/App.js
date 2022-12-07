@@ -28,11 +28,15 @@ function App() {
       const local_data = JSON.parse(localStorage.getItem("user_data"));
       if (local_data) {
         local_data.push(state);
+        setLocatSatate(local_data);
         localStorage.setItem("user_data", JSON.stringify(local_data));
-        window.location.reload();
+        // window.location.reload();
       } else {
+        console.log(localState, "CHECK KR RHA HU...");
+        console.log(state, "state CHECK KR RHA HU...");
+        setLocatSatate([state]);
         localStorage.setItem("user_data", JSON.stringify([state]));
-        window.location.reload();
+        // window.location.reload();
       }
     }
   }
@@ -51,7 +55,8 @@ function App() {
     setState({
       ...state,
       first_name: All_Todo[ind].first_name,
-      last_name: All_Todo[ind].last_name,id:ind
+      last_name: All_Todo[ind].last_name,
+      id: ind,
     });
     setCheck(true);
   }
@@ -67,8 +72,8 @@ function App() {
       const local_data = JSON.parse(localStorage.getItem("user_data"));
       local_data[ind]["first_name"] = first_name;
       local_data[ind]["last_name"] = last_name;
+      setCheck(false);
       localStorage.setItem("user_data", JSON.stringify(local_data));
-      window.location.reload();
     }
   }
 
@@ -86,7 +91,6 @@ function App() {
                   First Name
                 </label>
                 <input
-                  value={state.first_name}
                   onChange={onChangeHandler}
                   class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-2 mb-3 leading-tight focus:outline-none focus:bg-white"
                   id="grid-first-name"
@@ -105,7 +109,6 @@ function App() {
                 </label>
                 <input
                   name="last_name"
-                  value={state.last_name}
                   onChange={onChangeHandler}
                   class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   id="grid-last-name"
@@ -145,7 +148,7 @@ function App() {
                   class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   for="grid-first-name"
                 >
-                  First Name
+                  Updated First Name
                 </label>
                 <input
                   value={state.first_name}
@@ -163,7 +166,7 @@ function App() {
                   class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   for="grid-last-name"
                 >
-                  Last Name
+                  Updated Last Name
                 </label>
                 <input
                   name="last_name"
@@ -265,7 +268,7 @@ function App() {
               </th>
             </tr>
           </thead>
-          {localState.length === 0
+          {!localState
             ? ""
             : localState.map((element, ind) => {
                 return (
