@@ -6,6 +6,10 @@ function App() {
 
   const [localState, setLocatSatate] = useState([]);
 
+  const [UpValue,setUpValue] = useState({})
+
+  const [Update_Button,setUpdate_Button] = useState(false)
+
   useEffect(() => {
     const local_dat = JSON.parse(localStorage.getItem("user_data"));
     console.log(local_dat, "userState.....");
@@ -13,7 +17,8 @@ function App() {
   }, []);
 
   function onChangeHandler(event) {
-    setState({ ...state, [event.target.name]: event.target.value });
+    console.log("Hello Event", event.target.value);
+    setUpValue({ ...state, [event.target.name]: event.target.value });
   }
 
   function ON_SUBMIT() {
@@ -28,10 +33,30 @@ function App() {
       if (local_data) {
         local_data.push(state);
         localStorage.setItem("user_data", JSON.stringify(local_data));
+        window.location.reload();
       } else {
         localStorage.setItem("user_data", JSON.stringify([state]));
+        window.location.reload();
       }
     }
+  }
+
+  function deleteToDo(event) {
+    let ind = event;
+    const All_Todo = localState;
+    All_Todo.splice(ind, 1);
+    console.log(All_Todo, "yes this is new arry..");
+    localStorage.setItem("user_data", JSON.stringify(All_Todo));
+    window.location.reload();
+  }
+
+  function updateToDo(event){
+    let ind = event
+    const All_Todo = localState;
+    console.log(All_Todo[ind]);
+    setUpValue({...UpValue,"first_name":All_Todo[ind].first_name,"last_name":All_Todo[ind].last_name})
+    setUpdate_Button(Update_Button=true)
+
   }
 
   return (
@@ -47,7 +72,7 @@ function App() {
                 First Name
               </label>
               <input
-                // onChange={onChangeHandler}
+              value={UpValue.first_name}
                 onChange={onChangeHandler}
                 class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-2 mb-3 leading-tight focus:outline-none focus:bg-white"
                 id="grid-first-name"
@@ -66,6 +91,7 @@ function App() {
               </label>
               <input
                 name="last_name"
+                value={UpValue.last_name}
                 onChange={onChangeHandler}
                 class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 id="grid-last-name"
@@ -97,6 +123,7 @@ function App() {
             </div>
           </div>
         </div>
+        
         <table class="mt-10 w-full max-w">
           <thead>
             <tr className="bg-green-300">
@@ -109,12 +136,14 @@ function App() {
               <th className="border-2 border-purple-900 py-2 uppercase font-bold text-lg">
                 Email
               </th>
-              <th className="border-2 border-purple-900 uppercase font-bold text-2xl ">👇</th>
+              <th className="border-2 border-purple-900 uppercase font-bold text-2xl ">
+                👇
+              </th>
             </tr>
           </thead>
-          {!localState
+          {localState.length === 0
             ? ""
-            : localState.map((element) => {
+            : localState.map((element, ind) => {
                 return (
                   <tbody className="bg-emerald-50">
                     <tr>
@@ -128,12 +157,21 @@ function App() {
                         {element.email}
                       </td>
                       <td className="uppercase border-2 border-purple-900 text-center ">
-                        <span>
-                          <ion-icon class="mt-1 px-1 py-1  rounded-full text-xl text-black hover:bg-red-700 hover:text-white" name="create"></ion-icon>
-                        </span>
-                        <span>
+                        <span onClick={() => {
+                            updateToDo(ind);
+                          }}>
                           <ion-icon
-                            class="px-1 py-1  mt-1 rounded-full text-xl text-black hover:bg-red-700 hover:text-white"
+                            class="mt-1 px-1 py-1 cursor-pointer rounded-full text-xl text-black hover:bg-blue-700 hover:text-white"
+                            name="create"
+                          ></ion-icon>
+                        </span>
+                        <span
+                          onClick={() => {
+                            deleteToDo(ind);
+                          }}
+                        >
+                          <ion-icon
+                            class="px-1 py-1  mt-1 rounded-full cursor-pointer text-xl text-black hover:bg-red-700 hover:text-white"
                             name="trash"
                           ></ion-icon>
                         </span>
